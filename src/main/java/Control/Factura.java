@@ -6,7 +6,7 @@ package Control;
 import Model.Cliente;
 /**
  *
- * @author Alima
+ * @author Diego
  */
 public class Factura implements Pago {
     private Cliente cliente;
@@ -25,6 +25,11 @@ public class Factura implements Pago {
     public void pagoCheque() {
         System.out.println("Pago con cheque realizado.");
         cliente.setHaPagado(true);
+    }
+
+    @Override
+    public void pagoCredito() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
 

@@ -12,10 +12,22 @@ import java.util.*;
 public class Lectura {
     private Scanner entrada = new Scanner(System.in);
     
-   public int leerInt(String mensaje){
-    System.out.println(mensaje);
-    int valor = entrada.nextInt();
-    entrada.nextLine(); // 👈 limpiar el salto de línea pendiente
+   public int leerInt(String mensaje) {
+    int valor = 0;
+    boolean valido = false;
+
+    while (!valido) {
+        try {
+            System.out.println(mensaje);
+            valor = entrada.nextInt();  
+            entrada.nextLine(); 
+            valido = true; 
+        } catch (InputMismatchException e) {
+            System.out.println("Error: debe ingresar un número válido.");
+            entrada.nextLine(); 
+        }
+    }
+
     return valor;
 }
 

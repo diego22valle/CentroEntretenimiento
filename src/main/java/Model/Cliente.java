@@ -6,7 +6,7 @@ package Model;
 
 /**
  *
- * @author Alima
+ * @author Diego
  */
 public class Cliente extends Persona {
     private int estratoSE;

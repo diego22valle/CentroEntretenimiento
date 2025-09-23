@@ -106,6 +106,7 @@ public class GestionarCliente {
             cliente.setHaPagado(false);
             System.out.println("No se registró ningún pago.");
         }
+        
     }
     
     public void mostrarEstadoCuenta(Cliente cliente) {

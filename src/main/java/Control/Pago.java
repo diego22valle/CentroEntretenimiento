@@ -10,11 +10,12 @@ package Control;
  * Metdodos
  * templates o cascarones, prefacs, moldes para compartir comportamientos
  * 
- * @author Alima
+ * @author diego
  */
 public interface Pago {
     public void pagoEfectivo();
     public void pagoCheque();
+    public void pagoCredito();
     
     
 }
