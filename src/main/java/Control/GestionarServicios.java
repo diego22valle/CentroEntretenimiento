@@ -8,7 +8,7 @@ import Model.Servicio;
 import Util.Lectura;
 /**
  *
- * @author Ali
+ * @author Diego, Yesid
  */
 public class GestionarServicios {
     private Lectura lectura = new Lectura();

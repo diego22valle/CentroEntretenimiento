@@ -97,7 +97,7 @@ public class GestionarCliente {
     public void registrarPago(Cliente cliente) {
         // ✅ Verificamos si ya pagó
         if (cliente.getHaPagado()) {
-            System.out.println("⚠️ El cliente ya ha pagado la mensualidad. No es posible realizar otro pago.");
+            System.out.println("️ El cliente ya ha pagado la mensualidad. No es posible realizar otro pago.");
             return;
         }
 

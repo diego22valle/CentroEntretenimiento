@@ -37,13 +37,13 @@ public class Factura implements Pago {
 
         if (monto >= MENSUALIDAD) {
             cliente.setHaPagado(true);
-            System.out.println("✅ Pago realizado con " + metodo + ". Monto: $" + monto);
+            System.out.println("Pago realizado con " + metodo + ". Monto:" + monto);
             if (monto > MENSUALIDAD) {
-                System.out.println("⚠️ Pago excedente de: $" + (monto - MENSUALIDAD));
+                System.out.println("️ Pago excedente de:" + (monto - MENSUALIDAD));
             }
         } else {
             cliente.setHaPagado(false);
-            System.out.println("❌ El monto ingresado ($" + monto + ") no cubre la mensualidad de $" + MENSUALIDAD);
+            System.out.println("El monto ingresado ($" + monto + ") no cubre la mensualidad de: " + MENSUALIDAD);
         }
     }
 

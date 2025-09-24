@@ -44,11 +44,11 @@ public class Lectura {
         try {
             System.out.println(mensaje);
             valor = entrada.nextFloat();
-            entrada.nextLine(); // 👈 limpia el salto de línea pendiente
+            entrada.nextLine(); 
             valido = true;
         } catch (InputMismatchException e) {
             System.out.println("Error: debe ingresar un número decimal válido.");
-            entrada.nextLine(); // limpia el buffer en caso de error
+            entrada.nextLine(); 
         }
     }
 

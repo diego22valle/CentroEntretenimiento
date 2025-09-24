@@ -10,7 +10,7 @@ import Util.Lectura;
 /**
  * Ingresar un producto
  * Buscar un producto
- * @author Ali
+ * @author Diego, yesid
  */
 public class GestionarProductos {
     private Lectura lectura = new Lectura();

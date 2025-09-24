@@ -26,7 +26,7 @@ public class GestionarPlanEntrenamiento {
             return null;
         }
 
-        // Verificar que hay entrenadores registrados
+        
         if (empleado.entrenadores.isEmpty()) {
             System.out.println("No hay entrenadores registrados disponibles.");
             return null;
@@ -34,7 +34,7 @@ public class GestionarPlanEntrenamiento {
 
         PlanEntrenamiento plan = new PlanEntrenamiento();
 
-        // Selección de entrenador
+        
         System.out.println("\n--- SELECCIÓN DE ENTRENADOR ---");
         empleado.mostrarEntrenadores();
         int entrenadorNumero = leer.leerInt("Ingrese el número del entrenador: ");
@@ -46,7 +46,7 @@ public class GestionarPlanEntrenamiento {
         Empleado entrenadorSeleccionado = empleado.entrenadores.get(entrenadorNumero - 1);
         plan.setEntrenadorACargo(entrenadorSeleccionado);
 
-        // Selección de cliente (solo los que han pagado)
+        
         System.out.println("\n--- SELECCIÓN DE CLIENTE ---");
         cliente.mostrarClientes();
         int clienteNumero = leer.leerInt("Ingrese el número del cliente: ");
