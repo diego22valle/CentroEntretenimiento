@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Control;
 import Model.*;
 import java.util.ArrayList;
@@ -9,8 +5,8 @@ import Util.Lectura;
 import java.time.LocalDate;
 
 /**
- *
- * @author USUARIO
+ * @author yesitJaramillo
+ * @author diegoValle
  */
 public class GestionarPlanEntrenamiento {
     public Lectura leer = new Lectura();
@@ -102,20 +98,7 @@ public class GestionarPlanEntrenamiento {
 
         return plan;
     }
-
     
-    public PlanEntrenamiento obtenerPrimerPlanDelCliente(Cliente cliente) {
-    PlanEntrenamiento primerPlan = null;
-        for (PlanEntrenamiento p : planes) {
-            if (p.getClientePlan().equals(cliente)) {
-                if (primerPlan == null || p.getFechaInicio().isBefore(primerPlan.getFechaInicio())) {
-                    primerPlan = p;
-                }
-            }
-        }
-        return primerPlan;
-    }
-
     public void mostrarPlanes() {
         if (planes.isEmpty()) {
             System.out.println("No hay planes creados. Debes crear un plan primero.");
@@ -136,6 +119,6 @@ public class GestionarPlanEntrenamiento {
             System.out.println("Fecha de inicio: " + planAux.getFechaInicio());
             System.out.println("Fecha de fin: " + planAux.getFechaFin());
             System.out.println("-------------------------------------");
-        }
-    }
+}
+}
 }

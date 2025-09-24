@@ -36,10 +36,25 @@ public class Lectura {
         return entrada.nextLine();
     }
     
-    public float leerFloat(String mensaje){
-        System.out.println(""+mensaje);
-        return entrada.nextFloat();
+    public float leerFloat(String mensaje) {
+    float valor = 0;
+    boolean valido = false;
+
+    while (!valido) {
+        try {
+            System.out.println(mensaje);
+            valor = entrada.nextFloat();
+            entrada.nextLine(); // 👈 limpia el salto de línea pendiente
+            valido = true;
+        } catch (InputMismatchException e) {
+            System.out.println("Error: debe ingresar un número decimal válido.");
+            entrada.nextLine(); // limpia el buffer en caso de error
+        }
     }
+
+    return valor;
+}
+
     
     public Boolean leerBoolean(String mensaje){
         System.out.println(""+mensaje);

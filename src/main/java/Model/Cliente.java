@@ -16,6 +16,8 @@ public class Cliente extends Persona {
     private int cantidadAFMinutos;
     private int peso;
     private boolean haPagado;
+    private double mensualidad;
+    private double saldoPendiente;
 
 
     public Cliente() {
@@ -85,21 +87,39 @@ public class Cliente extends Persona {
 
     public void setHaPagado(boolean haPagado) {
         this.haPagado = haPagado;
+    }   
+
+    public double getMensualidad() {
+        return mensualidad;
     }
 
+    public void setMensualidad(double mensualidad) {
+        this.mensualidad = mensualidad;
+    }
+
+    public double getSaldoPendiente() {
+        return saldoPendiente;
+    }
+
+    public void setSaldoPendiente(double saldoPendiente) {
+        this.saldoPendiente = saldoPendiente;
+    }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(super.toString());
-        sb.append("Cliente");
+        sb.append("Cliente{");
         sb.append("estratoSE=").append(estratoSE);
         sb.append(", trabajaEn=").append(trabajaEn);
         sb.append(", practicaActividadFisica=").append(practicaActividadFisica);
         sb.append(", actividadFisica=").append(actividadFisica);
         sb.append(", cantidadAFMinutos=").append(cantidadAFMinutos);
         sb.append(", peso=").append(peso);
+        sb.append(", haPagado=").append(haPagado);
+        sb.append(", mensualidad=").append(mensualidad);
+        sb.append(", saldoPendiente=").append(saldoPendiente);
         sb.append('}');
         return sb.toString();
-    }   
+    }
+    
 }

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package com.mycompany.centroentretenimiento;
 
 import Control.GestionarEmpleados;
@@ -16,8 +12,8 @@ public class CentroEntretenimiento {
     GestionarCliente gestionCliente = new GestionarCliente();
     GestionarEmpleados gestionEmpleado = new GestionarEmpleados();
     GestionarPlanEntrenamiento gestionPlan = new GestionarPlanEntrenamiento(gestionCliente, gestionEmpleado);
-    gestionCliente.setGestionarPlan(gestionPlan);
     gestionEmpleado.setGestionarPlan(gestionPlan);
+    gestionEmpleado.setGestionCliente(gestionCliente);
 
 
     int opcion;
@@ -36,6 +32,5 @@ public class CentroEntretenimiento {
                 break;        
         }
     }while(opcion!=0);
-    }
 }
-
+}

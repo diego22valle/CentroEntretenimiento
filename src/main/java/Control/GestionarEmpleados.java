@@ -1,31 +1,46 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Control;
 import Model.Empleado;
 import Util.Lectura;
 import java.util.ArrayList;
+import java.time.LocalDate;
+
+
 /**
- *
- * @author Alima
+ * @author yesitJaramillo
+ * @author diegoValle
  */
 
 //Organizar la sobreescritura para mostrar todos los datos cuando muestro la información del arreglo
 public class GestionarEmpleados {
     private Lectura lectura = new Lectura();
+    private GestionarCliente gestionCliente;
     private GestionarPlanEntrenamiento gestionarPlan;
     public ArrayList<Empleado> entrenadores = new ArrayList();
+    public ArrayList<Empleado> cajeros = new ArrayList();
     public ArrayList<Empleado> empleados = new ArrayList();
-     public void setGestionarPlan(GestionarPlanEntrenamiento gestionarPlan) {
+    public GestionarRegistro registro = new GestionarRegistro();
+    private boolean liquidacion = false;
+    public void setGestionCliente(GestionarCliente gestionCliente)
+    {
+        this.gestionCliente = gestionCliente;
+    }
+    public void setGestionarPlan(GestionarPlanEntrenamiento gestionarPlan) {
         this.gestionarPlan = gestionarPlan;
     }
     
     public Empleado crearEmpleado(){
         Empleado empleado = new Empleado();
-        System.out.println("\n----Ingrese los datos del cliente----");
+        System.out.println("\n----Ingrese los datos del empleado----");
         empleado.setNombre(lectura.leerString("Nombre: "));
-        empleado.setIdentificación(lectura.leerInt("Identificacion: "));
+        
+        int id = lectura.leerInt("Ingrese la identificación: ");
+        if (registro.registrarId(id)){
+            empleado.setIdentificación(id);
+        }else{
+            System.out.println("Ya existe un usuario con esa identificación");
+            return null;
+        }
+        
         empleado.setDirección(lectura.leerString("Dirección: "));
         empleado.setTelefono(lectura.leerInt("Telefono: "));
         empleado.setAntiguedad(lectura.leerInt("Numero de años en la empresa: "));
@@ -33,13 +48,16 @@ public class GestionarEmpleados {
         empleado.setSalario(lectura.leerInt("Ingrese el salario del empleado: "));
         System.out.println("-------------------------------------");
         
-        if (empleado.getCargo().equalsIgnoreCase("entrenador")){
-        entrenadores.add(empleado);
+        if(empleado.getCargo().equalsIgnoreCase("entrenador")) {
+            entrenadores.add(empleado);
+        }else if(empleado.getCargo().equalsIgnoreCase("cajero")) {
+            cajeros.add(empleado);
         }else{
-        empleados.add(empleado);
+            empleados.add(empleado);
         }
         return empleado;
     }
+    
     public void mostrarEntrenadores() {
         for (int i = 0; i < entrenadores.size(); i++) {
             Empleado entrenadorAux = entrenadores.get(i);
@@ -51,6 +69,7 @@ public class GestionarEmpleados {
         ArrayList<Empleado> todos = new ArrayList<>();
         todos.addAll(entrenadores);
         todos.addAll(empleados);
+        todos.addAll(cajeros);
 
         for (Empleado empleado : todos) {
             if (empleado.getNombre().equalsIgnoreCase(nombre) && empleado.getIdentificación() == identificacion && empleado.getCargo().equalsIgnoreCase(cargo)) {
@@ -76,6 +95,59 @@ public class GestionarEmpleados {
         return empleado.getCargo(); // Retorna el cargo
     }
     
+    public void arqueoDeCajaDelDia() {
+    ArrayList<Factura> facturas = gestionCliente.getFacturas();
+    if (liquidacion) {
+        System.out.println("No hay información disponible, la liquidación ya fue hecha.");
+        return;
+    }
+
+    LocalDate hoy = LocalDate.now();
+    int totalPagos = 0;
+    int pagosEfectivo = 0;
+    int pagosCheque = 0;
+    int pagosCredito = 0;
+    int pagosDebito = 0;
+    double totalRecaudado = 0;
+
+    System.out.println("\n--- ARQUEO DE CAJA DEL DÍA: " + hoy + " ---");
+
+    for (Factura f : facturas) {
+        if (f.getFechaPago() != null && f.getFechaPago().equals(hoy)) {
+            totalPagos++;
+            totalRecaudado += f.getMonto();
+
+            String metodo = f.getMetodoPago();
+            System.out.println("- Cliente: " + f.getCliente().getNombre() 
+                + " | Método: " + metodo 
+                + " | Monto: $" + f.getMonto());
+
+            if (metodo.equalsIgnoreCase("Efectivo")) pagosEfectivo++;
+            else if (metodo.equalsIgnoreCase("Cheque")) pagosCheque++;
+            else if (metodo.equalsIgnoreCase("Tarjeta Crédito")) pagosCredito++;
+            else if (metodo.equalsIgnoreCase("Tarjeta Débito")) pagosDebito++;
+        }
+    }
+
+    System.out.println("\nResumen del día:");
+    System.out.println("Total pagos realizados: " + totalPagos);
+    System.out.println("Efectivo: " + pagosEfectivo);
+    System.out.println("Cheque: " + pagosCheque);
+    System.out.println("Tarjeta Crédito: " + pagosCredito);
+    System.out.println("Tarjeta Débito: " + pagosDebito);
+    System.out.println("Total recaudado: $" + totalRecaudado);
+
+    String respuesta = lectura.leerString("\n¿Desea hacer la liquidación de caja? (si/no): ");
+    if (respuesta.equalsIgnoreCase("si")) {
+        System.out.println("Se realizó la liquidación del día: " + hoy);
+        liquidacion = true;
+    } else {
+        System.out.println("No se realizó la liquidación del día.");
+    }
+}
+
+
+    
     public void menuEmpleado() {
         int opcion;
         do{
@@ -90,12 +162,16 @@ public class GestionarEmpleados {
                     break;
                 case 2:
                     String cargoVerificado = probarVerificacion();
-                    if (cargoVerificado != null && cargoVerificado.equalsIgnoreCase("entrenador")) {
-                        menuEntrenador();
-                    } else {
-                        System.out.println("No se pudo acceder al menú de entrenador.");
+                    if (cargoVerificado != null) {
+                        if (cargoVerificado.equalsIgnoreCase("entrenador")) {
+                            menuEntrenador();
+                        } else if (cargoVerificado.equalsIgnoreCase("cajero")) {
+                            menuCajero();
+                        } else {
+                            System.out.println("No se pudo acceder a un menú válido para el cargo: " + cargoVerificado);
+                        }
+                        break;
                     }
-                    break;
             }
         }while(opcion!=0);
     }
@@ -114,6 +190,21 @@ public class GestionarEmpleados {
                     break;
                 case 2:
                     gestionarPlan.mostrarPlanes();
+            }
+        }while(opcion!=0);
+    }
+    
+    public void menuCajero() {
+        int opcion;
+        do{
+            System.out.println("\nCAJERO:");
+            System.out.println("[1] Arqueo de caja");
+            System.out.println("[0] Atras");
+            opcion = lectura.leerInt("Ingrese la opción: ");
+            switch (opcion){
+                case 1:
+                    arqueoDeCajaDelDia();
+                    break;
             }
         }while(opcion!=0);
     }

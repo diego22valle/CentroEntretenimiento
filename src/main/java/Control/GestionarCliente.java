@@ -1,56 +1,58 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Control;
+
 import Util.Lectura;
 import Model.Cliente;
 import java.util.ArrayList;
-import Model.PlanEntrenamiento;
 
 /**
- *
- * @author Alima
+ * @author yesitJaramillo
+ * @author diegoValle
  */
 //
 public class GestionarCliente {
-    private Lectura lectura = new Lectura();
-    private GestionarPlanEntrenamiento gestionarPlan;
-    public ArrayList<Cliente> clientes = new ArrayList(); 
-    public void setGestionarPlan(GestionarPlanEntrenamiento gestionarPlan) {
-        this.gestionarPlan = gestionarPlan;
-    }
 
-    
-    public Cliente crearCliente(){
+    private Lectura lectura = new Lectura();
+    public ArrayList<Cliente> clientes = new ArrayList();
+    private ArrayList<Factura> facturas = new ArrayList<>();
+    public GestionarRegistro registro = new GestionarRegistro();
+
+    public Cliente crearCliente() {
         Cliente cliente = new Cliente();
         System.out.println("\n----Ingrese los datos del cliente----");
-        
+
         cliente.setNombre(lectura.leerString("Nombre: "));
-        cliente.setIdentificación(lectura.leerInt("Identificación: "));
-        cliente.setDirección(lectura.leerString("Dirección: ")); 
+
+        int id = lectura.leerInt("Ingrese la identificación del cliente: ");
+        if (registro.registrarId(id)) {
+            cliente.setIdentificación(id);
+        } else {
+            System.out.println("Ya hay un usuario con esa identificación");
+            return null;
+        }
+
+        cliente.setDirección(lectura.leerString("Dirección: "));
         cliente.setTelefono(lectura.leerInt("Telefono: "));
         cliente.setEstratoSE(lectura.leerInt("Estrato: "));
         cliente.setTrabajaEn(lectura.leerString("Empleo: "));
         cliente.setPeso(lectura.leerInt("Peso: "));
         String pA = lectura.leerString("Practica alguna actividad fisica si/no");
         System.out.println("-------------------------------------");
-        
-        if (pA.equalsIgnoreCase("si")){ //Corregír esta doble verificación
-        cliente.setPracticaActividadFisica(true);}
-        else{
+
+        if (pA.equalsIgnoreCase("si")) { //Corregír esta doble verificación
+            cliente.setPracticaActividadFisica(true);
+        } else {
             cliente.setPracticaActividadFisica(false);
         }
-        if(cliente.getPracticaActividadFisica()){
-        cliente.setActividadFisica(lectura.leerString("Ingrese la actividad fisica que practica: "));
-        cliente.setCantidadAFMinutos(lectura.leerInt("Ingrese la cantidad de minutos: "));
-        
+        if (cliente.getPracticaActividadFisica()) {
+            cliente.setActividadFisica(lectura.leerString("Ingrese la actividad fisica que practica: "));
+            cliente.setCantidadAFMinutos(lectura.leerInt("Ingrese la cantidad de minutos: "));
+
         }
         clientes.add(cliente);
-        
+
         return cliente;
     }
-    
+
     public void mostrarClientes() {
         ArrayList<Cliente> clientesPagados = obtenerClientesPagados();
         for (int i = 0; i < clientesPagados.size(); i++) {
@@ -58,17 +60,15 @@ public class GestionarCliente {
             System.out.println((i + 1) + ". " + clienteAux.getNombre());
         }
     }
-    
+
     public Cliente buscarCliente(String nombre, int identificacion) {
         for (Cliente cliente : clientes) {
             if (cliente.getNombre().equalsIgnoreCase(nombre) && cliente.getIdentificación() == identificacion) {
-                return cliente; // Cliente encontrado
+                return cliente;
             }
         }
-        return null; // Cliente no encontrado
+        return null;
     }
-    
- 
 
     public ArrayList<Cliente> obtenerClientesPagados() {
         ArrayList<Cliente> pagados = new ArrayList<>();
@@ -79,7 +79,7 @@ public class GestionarCliente {
         }
         return pagados;
     }
-    
+
     public Cliente verificarCliente() {
         String nombre = lectura.leerString("Nombre: ");
         int id = lectura.leerInt("Identificación: ");
@@ -93,53 +93,84 @@ public class GestionarCliente {
         System.out.println("Cliente verificado.");
         return cliente;
     }
-    
-     public void registrarPago(Cliente cliente) {
-        String metodoPago = lectura.leerString("¿Cómo desea pagar? (efectivo/cheque/ninguno): ");
-        Factura factura = new Factura(cliente);
 
-        if (metodoPago.equalsIgnoreCase("efectivo")) {
-            factura.pagoEfectivo();
-        } else if (metodoPago.equalsIgnoreCase("cheque")) {
-            factura.pagoCheque();
-        } else {
-            cliente.setHaPagado(false);
-            System.out.println("No se registró ningún pago.");
+    public void registrarPago(Cliente cliente) {
+        // ✅ Verificamos si ya pagó
+        if (cliente.getHaPagado()) {
+            System.out.println("⚠️ El cliente ya ha pagado la mensualidad. No es posible realizar otro pago.");
+            return;
         }
-        
+
+        double monto = lectura.leerFloat("Ingrese el monto a pagar: ");
+        cliente.setMensualidad(Factura.MENSUALIDAD);
+
+        if (monto < Factura.MENSUALIDAD) {
+            System.out.println("El monto es insuficiente. Mensualidad: " + Factura.MENSUALIDAD);
+            cliente.setHaPagado(false);
+            return;
+        }
+
+        // Ahora sí preguntamos método de pago
+        String metodoPago = lectura.leerString("¿Cómo desea pagar? (efectivo/cheque/tarjeta credito/tarjeta debito): ");
+        Factura factura = new Factura(cliente, monto); // 👈 importante pasar monto
+
+        switch (metodoPago.toLowerCase()) {
+            case "efectivo":
+                factura.pagoEfectivo();
+                break;
+            case "cheque":
+                factura.pagoCheque();
+                break;
+            case "tarjeta credito":
+                factura.pagoTarjetaCredito();
+                break;
+            case "tarjeta debito":
+                factura.pagoTarjetaDebito();
+                break;
+            default:
+                System.out.println("Método de pago no válido.");
+                return;
+        }
+
+        facturas.add(factura);
+        cliente.setHaPagado(true);
+        cliente.setSaldoPendiente(0); // ya pagó
+        System.out.println(" Pago registrado con éxito. Factura generada.");
     }
-    
-    public void mostrarEstadoCuenta(Cliente cliente) {
+
+    public ArrayList<Factura> getFacturas() {
+        return facturas;
+    }
+
+    public void mostrarEstadoCuenta(Cliente cliente) { //Hay que organizar bien el Estado de Cuenta
         if (cliente == null) {
             System.out.println("No se puede mostrar el estado de cuenta: cliente inválido.");
             return;
         }
-
-        PlanEntrenamiento primerPlan = gestionarPlan.obtenerPrimerPlanDelCliente(cliente);
-
-        if (primerPlan != null) {
-            System.out.println("Fecha de inicio: " + primerPlan.getFechaInicio());
-            System.out.println("Fecha de fin: " + primerPlan.getFechaInicio().plusDays(30));
-        } else {
-            System.out.println("El cliente no tiene planes registrados.");
-        }
-
         if (cliente.getHaPagado()) {
             System.out.println("Estado de pago: Pagado");
+            for (Factura f : facturas) {
+                if (f.getCliente().equals(cliente) && f.getFechaPago() != null) {
+                    System.out.println("Fecha de inicio: " + f.getFechaPago());
+                    System.out.println("Fecha de fin: " + f.getFechaPago().plusDays(30));
+                    break;
+                }
+            }
         } else {
             System.out.println("Estado de pago: Pendiente");
+            System.out.println("El cliente no ha pagado la mensualidad.");
         }
     }
-    
+
     public void menuCliente() {
         int opcion;
-        do{
+        do {
             System.out.println("\nCLIENTE:");
             System.out.println("[1] Registrar");
             System.out.println("[2] Ingresar");
             System.out.println("[0] Atras");
             opcion = lectura.leerInt("Ingrese la opción: ");
-            switch (opcion){
+            switch (opcion) {
                 case 1:
                     crearCliente();
                     break;
@@ -150,9 +181,9 @@ public class GestionarCliente {
                     }
                     break;
             }
-        }while(opcion!=0);
+        } while (opcion != 0);
     }
-    
+
     public void menuClienteVerificado(Cliente cliente) {
         int opcion;
         do {
@@ -167,9 +198,9 @@ public class GestionarCliente {
                     mostrarEstadoCuenta(cliente);
                     break;
                 case 2:
-                    registrarPago(cliente);    
+                    registrarPago(cliente);
             }
         } while (opcion != 0);
-}
+    }
 
 }
